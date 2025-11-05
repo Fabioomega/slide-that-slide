@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:noble
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: felipe
+      ME_CONFIG_BASICAUTH_PASSWORD: felipe
+    depends_on:
+      - mongo
+
+  backend:
+    build: ./backend
+    container_name: express-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URL: mongodb://root:root@mongo:27017/
+      PORT: 3000
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./frontend
+    container_name: vue-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    command: ["npm", "run", "dev", "--", "--host"]
+
+volumes:
+  mongo_data:
+
