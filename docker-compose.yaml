@@ -1,8 +1,6 @@
-version: '3.9'
-
 services:
   mongo:
-    image: mongo:noble
+    image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -49,9 +47,9 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: ["npm", "run", "dev", "--", "--host"]
+      - ./frontend/src:/app/src
+      - ./frontend/vite.config.js:/app/vite.config.js
+      - ./frontend/package.json:/app/package.json
 
 volumes:
   mongo_data:
