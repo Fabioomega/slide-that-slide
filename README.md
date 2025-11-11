@@ -205,7 +205,7 @@ Retorno esperado:
 
 A API está totalmente documentada com **OpenAPI 3.0** e pode ser acessada em:
 
-👉 **[http://localhost:3000/docs](http://localhost:3000/api/docs)**
+👉 **[http://localhost:3000/api/docs](http://localhost:3000/api/docs)**
 
 A documentação contém:
 - Estrutura de requisições e respostas  
