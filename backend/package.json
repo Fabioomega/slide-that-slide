@@ -1,18 +1,27 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
-  "author": "",
+  "description": "Backend do projeto Slide That Slide",
+  "main": "src/server.js",
   "type": "commonjs",
-  "main": "index.js",
+  "author": "Ian Andriani",
+  "license": "ISC",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "express": "node index.js"
+    "dev": "nodemon --legacy-watch src/server.js",
+    "start": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "argon2": "^0.40.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^5.1.0",
-    "mongodb": "^6.20.0",
-    "mongoose": "^8.19.3"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
