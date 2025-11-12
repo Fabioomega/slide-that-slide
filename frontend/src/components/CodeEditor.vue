@@ -1,4 +1,5 @@
 <script>
+import hljs from 'highlight.js';
 import CodeEditorComponent from "simple-code-editor";
 import { formatFrame } from "~/libraries/dinamicFormat";
 
