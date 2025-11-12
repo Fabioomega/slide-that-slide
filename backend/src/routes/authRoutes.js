@@ -5,6 +5,7 @@ const auth = require('../middlewares/auth');
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.get('/logout', authController.logout);
 
 // exemplo de uma rota protegida (essa rota pode ser apagada no futuro visto que é um exemplo)
 // PS: Utilizar esse padrão para outras rotas protegidas quando necessário
