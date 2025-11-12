@@ -48,11 +48,11 @@ export default {
       "slideList": [{
         name: "New Slide",
         frameContent: defaultFrame,
-        editorContent: defaultContent
+        editorContent: structuredClone(defaultContent)
       }],
       "slideName": "New Slide",
       "frameContent": "",
-      "editorContent": defaultContent,
+      "editorContent": structuredClone(defaultContent),
     }
   },
   methods: {
@@ -66,7 +66,7 @@ export default {
       });
 
       this.frameContent = defaultFrame;
-      this.editorContent = defaultContent;
+      this.editorContent = structuredClone(defaultContent);
     },
     selectedSlide(n) {
       this.slideList[currentSlide].name = this.slideName;

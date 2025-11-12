@@ -45,5 +45,5 @@ export default {
     <CodeEditor v-model="editorContent.html" :languages="[['HTML']]" />
     <CodeEditor v-model="editorContent.js" :languages="[['JS']]" />
     <CodeEditor v-model="editorContent.css" :languages="[['CSS']]" />
-    <iframe :srcdoc="frameContent" sandbox></iframe>
+    <iframe :srcdoc="frameContent" sandbox="allow-scripts"></iframe>
 </template>
