@@ -41,8 +41,9 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - ./backend/src:/app/src
+      - ./backend/package.json:/app/package.json
+      - ./backend/.env:/app/.env
 
   frontend:
     build: ./frontend
