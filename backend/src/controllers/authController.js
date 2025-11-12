@@ -90,8 +90,14 @@ exports.login = async (req, res, next) => {
             { expiresIn: "1h" }
         ); 
 
+        res.cookie("token", token, {
+            httpOnly: true,       
+            secure: false, 
+            sameSite: "strict",   
+            maxAge: 60 * 60 * 1000 
+        });
+
         return res.json({
-            token,
             user: { id: user._id, username: user.username, role: user.role }
         });
         
@@ -101,3 +107,8 @@ exports.login = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.logout = async (req, res, next) => {
+    res.clearCookie("token", { path: "/" });
+    return res.json({"mensagem": "Logout realizado."});
+};
