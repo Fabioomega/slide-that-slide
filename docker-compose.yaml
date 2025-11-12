@@ -25,6 +25,18 @@ services:
     depends_on:
       - mongo
 
+  frontend:
+    build: ./frontend
+    container_name: vue-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/vite.config.js:/app/vite.config.js
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/dist:/app/dist
+
   backend:
     build: ./backend
     container_name: express-backend
@@ -40,23 +52,12 @@ services:
       PORT: 3000
     depends_on:
       - mongo
+      - frontend
     volumes:
       - ./backend/src:/app/src
       - ./backend/package.json:/app/package.json
       - ./backend/.env:/app/.env
-
-  frontend:
-    build: ./frontend
-    container_name: vue-frontend
-    restart: always
-    ports:
-      - "5173:5173"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/vite.config.js:/app/vite.config.js
-      - ./frontend/package.json:/app/package.json
+      - ./frontend/dist:/app/src/dist
 
 volumes:
   mongo_data:

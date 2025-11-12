@@ -1,5 +1,6 @@
 <script>
 import CodeEditorComponent from "simple-code-editor";
+import { formatFrame } from "~/libraries/dinamicFormat";
 
 export default {
     components: { CodeEditor: CodeEditorComponent },
@@ -18,20 +19,8 @@ export default {
         }
     },
     methods: {
-        formatFrame() {
-            return `<!DOCTYPE html>
-<html>
-<head>
-    <style>${this.editorContent.css}</style>
-</head>
-<body>
-  ${this.editorContent.html}
-  <script>${this.editorContent.js}${"<\/script>"}
-</body>
-</html>`;
-        },
         updateFrame() {
-            this.$emit("update:frameContent", this.formatFrame());
+            this.$emit("update:frameContent", formatFrame(this.editorContent));
         }
     },
     mounted() {

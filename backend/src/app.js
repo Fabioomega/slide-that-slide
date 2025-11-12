@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path')
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -9,6 +10,8 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
+
+app.use(express.static(path.join(__dirname, './dist/assets')))
 
 app.use(cors());
 app.use(express.json());
@@ -342,7 +345,7 @@ const swaggerSpec = swaggerJSDoc({
       }
     }
   },
-  apis: [] 
+  apis: []
 });
 
 app.use('/api/auth', authRoutes);
