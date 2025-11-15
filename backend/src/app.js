@@ -8,14 +8,15 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const errorHandler = require('./middlewares/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const pageRoutes = require('./routes/pageRoutes');
 
 const cookieParser = require('cookie-parser');
 const app = express();
 
-app.use(express.static(path.join(__dirname, './dist/assets')))
+app.use("/assets", express.static(path.join(__dirname, './dist/assets')))
 
 app.use(cors({
-  origin: 'http://localhost:5173', 
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 
@@ -355,6 +356,7 @@ const swaggerSpec = swaggerJSDoc({
 
 app.use(cookieParser());
 
+app.use('/', pageRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 
