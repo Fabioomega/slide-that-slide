@@ -14,22 +14,13 @@ exports.listSlides = async (req, res, next) => {
 
 exports.createSlides = async (req, res, next) => {
     try {
-        const meuNovoSlide = new Slide({
-            name: "Slide de Teste",
-            editorContent: {
-                html: "<h1>Título do Slide</h1><p>Algum conteúdo.</p>",
-                css: "h1 { color: steelblue; } p { font-size: 18px; }",
-                js: "" // Pode ser uma string vazia se não houver JS
-            },
-            transitionTime: 15, // Um número
-            expirationDate: "2025-12-31" // Uma string
-        });
-        const slides = await Slide.create(meuNovoSlide);
+         console.log("Recebido no req.body:", req.body); 
+        const new_slide = await Slide.create(req.body);
 
-
-        res.status(200).json(slides);
+        res.status(200).json(new_slide);
     }
     catch (err) {
+        console.error("Erro ao criar slide:", err);
         next(err)
     }
 }
