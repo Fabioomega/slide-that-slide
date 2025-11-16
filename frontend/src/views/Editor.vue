@@ -1,5 +1,5 @@
 <script>
-import { customRef } from "vue";
+import { Toast } from "primevue";
 import CodeEditor from "~/components/CodeEditor.vue";
 import SlideSelector from "~/components/SlideSelector.vue";
 import { formatFrame } from "~/libraries/dinamicFormat";
@@ -20,6 +20,7 @@ export default {
   components: {
     CodeEditor,
     SlideSelector,
+    Toast,
   },
   data() {
     return {
@@ -66,23 +67,19 @@ export default {
       this.frameContent = formatFrame(this.slideList[n].editorContent);
       currentSlide = n;
     },
+    notifySave() {
+      this.$toast.add({ severity: 'info', summary: "The project was saved successfully", life: 200 })
+    }
   },
 };
 </script>
 
 <template>
-  <SlideSelector
-    :slide-list="slideList"
-    @add-new-slide="addNewSlide"
-    @selected-slide="selectedSlide"
-  />
-  <CodeEditor
-    v-model:slide-name="slideName"
-    v-model:frame-content="frameContent"
-    v-model:editor-content="editorContent"
-    v-model:expiration-date="expirationDate"
-    v-model:transition-time="transitionTime"
-  />
+  <Toast />
+  <button @click="notifySave">Save Project</button>
+  <SlideSelector :slide-list="slideList" @add-new-slide="addNewSlide" @selected-slide="selectedSlide" />
+  <CodeEditor v-model:slide-name="slideName" v-model:frame-content="frameContent" v-model:editor-content="editorContent"
+    v-model:expiration-date="expirationDate" v-model:transition-time="transitionTime" />
 </template>
 
 <style scoped></style>
