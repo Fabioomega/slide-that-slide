@@ -1,6 +1,8 @@
 <script>
 import { formatFrame } from "~/libraries/dinamicFormat";
 
+let currentTimer = -1;
+
 export default {
   data() {
     return {
@@ -8,33 +10,37 @@ export default {
       slides: [],
     };
   },
+  watch: {
+    slides(newSlides, oldSlides) {
+      if (currentTimer !== -1) clearTimeout(currentTimer);
+      this.renderSlide(0);
+    }
+  },
   methods: {
-    rendering() {
-      let time_acc = 0;
+    renderSlide(idx) {
+      if (idx >= this.slides.length) {
+        if (this.slides.length === 0) return;
 
-      for (const slide of this.slides) {
-        if (
-          (slide.expirationDate !== null &&
-            Data.now() > new Date(slide.expirationDate)) ||
-          slide.transitionTime === -1
-        ) {
-          continue;
-        }
-
-        time_acc += slide.transitionTime / 1000;
-
-        setTimeout(() => {
-          this.frameContent = formatFrame(slide.editorContent);
-        }, time_acc);
+        this.renderSlide(0);
+        return;
       }
 
-      setTimeout(() => this.rendering(), time_acc);
+      let slide = this.slides[idx];
+
+      if (
+        (slide.expirationDate !== null &&
+          Data.now() > new Date(slide.expirationDate)) ||
+        slide.transitionTime <= 0
+      ) {
+        this.renderSlide(idx + 1);
+        return;
+      }
+
+      this.frameContent = formatFrame(slide.editorContent);
+      currentTimer = setTimeout(() => this.renderSlide(idx + 1), slide.transitionTime * 1000);
     },
-  },
-  mounted() {
-    this.loadSlides();
-  },
-};
+  }
+}
 </script>
 
 <template>
