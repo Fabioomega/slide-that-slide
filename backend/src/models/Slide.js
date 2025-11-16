@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
 const slideShema = new mongoose.Schema({
-    name: string,
+    name: String,
     editorContent: {
-        html: { type: string },
-        css: { type: string },
-        js: { type: string },
+        html: { type: String },
+        css: { type: String },
+        js: { type: String },
     },
-    transitionTime: number,
-    expirationDate: string
+    transitionTime: Number,
+    expirationDate: String
 });
 
 module.exports = mongoose.model('Slide', slideShema, 'slideShema');
