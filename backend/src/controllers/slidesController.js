@@ -1,4 +1,5 @@
 const Slide = require("../models/Slide")
+const emitter = require('../services/eventEmitter');
 
 exports.listSlides = async (req, res, next) => {
     try {
@@ -14,13 +15,22 @@ exports.listSlides = async (req, res, next) => {
 
 exports.createSlides = async (req, res, next) => {
     try {
-         console.log("Recebido no req.body:", req.body); 
-        const new_slide = await Slide.create(req.body);
+        console.log("Recebido no req.body:", req.body); 
 
-        res.status(200).json(new_slide);
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({ 
+                message: "O corpo da requisição deve ser um ARRAY de slides." 
+            });
+        }
+
+        await Slide.deleteMany({});
+        const new_slides = await Slide.insertMany(req.body);
+
+        emitter.emit('slidesUpdated');
+        res.status(200).json(new_slides);
     }
     catch (err) {
-        console.error("Erro ao criar slide:", err);
+        console.error("Erro ao substituir slide:", err);
         next(err)
     }
 }
