@@ -14,7 +14,7 @@ const defaultFrame = formatFrame(defaultContent);
 const defaultTransitionTime = 1.5;
 const defaultSlideName = "Cool Slide";
 
-let currentSlide = 0;
+let shouldSave = false;
 
 export default {
   components: {
@@ -39,10 +39,16 @@ export default {
       currentSlideIndex: 0,
     };
   },
+  watch: {
+    slideList: {
+      handler() {
+        shouldSave = true;
+      },
+      deep: true,
+    },
+  },
   methods: {
     addNewSlide() {
-      currentSlide = 0;
-
       this.slideList.push({
         name: this.slideName,
         editorContent: this.editorContent,
@@ -57,23 +63,35 @@ export default {
       this.currentSlideIndex = this.slideList.length - 1;
     },
     selectedSlide(n) {
-      this.slideList[currentSlide].name = this.slideName;
-      this.slideList[currentSlide].editorContent = this.editorContent;
-      this.slideList[currentSlide].transitionTime = this.transitionTime;
-      this.slideList[currentSlide].expirationDate = this.expirationDate;
+      this.slideList[this.currentSlideIndex].name = this.slideName;
+      this.slideList[this.currentSlideIndex].editorContent = this.editorContent;
+      this.slideList[this.currentSlideIndex].transitionTime = this.transitionTime;
+      this.slideList[this.currentSlideIndex].expirationDate = this.expirationDate;
 
       this.slideName = this.slideList[n].name;
       this.expirationDate = this.slideList[n].expirationDate;
       this.transitionTime = this.slideList[n].transitionTime;
       this.editorContent = this.slideList[n].editorContent;
       this.frameContent = formatFrame(this.slideList[n].editorContent);
-      currentSlide = n;
+
       this.currentSlideIndex = n;
     },
     notifySave() {
       this.$toast.add({ severity: 'info', summary: "The project was saved successfully", life: 2000 })
+    },
+    saveSlides() {
+      this.notifySave()
+    },
+    monitorSlides() {
+      if (shouldSave) {
+        this.saveSlides()
+        shouldSave = false;
+      }
     }
   },
+  mounted() {
+    setInterval(this.monitorSlides, 5000)
+  }
 };
 </script>
 
@@ -84,7 +102,7 @@ export default {
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2 class="sidebar-title">Slides</h2>
-        <button class="save-btn" @click="notifySave">
+        <button class="save-btn" @click="saveSlides">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path
               d="M12.5 2H3.5C2.67 2 2 2.67 2 3.5v9c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5zm-1 10h-7v-7h7v7zm-1-9h-4V2h4v1z"
