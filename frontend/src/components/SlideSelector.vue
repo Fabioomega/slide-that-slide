@@ -3,7 +3,7 @@ import { formatFrame } from "~/libraries/dinamicFormat";
 
 export default {
   props: ["slideList", "currentSlide"],
-  emits: ["addNewSlide", "selectedSlide"],
+  emits: ["addNewSlide", "removeSlide", "selectSlide"],
   computed: {
     slides() {
       return this.slideList.map((slide) => {
@@ -20,9 +20,18 @@ export default {
 <template>
   <div class="slide-selector-container">
     <div id="slides-preview-list">
-      <div v-for="(slide, idx) in this.slides" :key="idx" @click="$emit('selectedSlide', idx)" class="slide-item"
+      <div v-for="(slide, idx) in this.slides" :key="idx" class="slide-item"
         :class="{ 'slide-active': currentSlide === idx }">
-        <div class="slide-preview-wrapper">
+
+        <button class="delete-slide-btn" @click="$emit('removeSlide', idx)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+
+        <div class="slide-preview-wrapper" @click="$emit('selectSlide', idx)">
           <iframe :srcdoc="slide.content" class="slides-preview" sandbox=""></iframe>
           <div class="slide-overlay">
             <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -80,6 +89,38 @@ export default {
   border-color: #3b3b4f;
   background: #222232;
   transform: translateX(4px);
+}
+
+.delete-slide-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 30, 46, 0.8);
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  color: #71717a;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.slide-item:hover .delete-slide-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delete-slide-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  transform: scale(1.05);
 }
 
 .slide-item.slide-active {

@@ -10,11 +10,13 @@ const defaultContent = {
   css: "h1 {color: red}",
 };
 
-const defaultFrame = formatFrame(defaultContent);
 const defaultTransitionTime = 1.5;
 const defaultSlideName = "Cool Slide";
 
 let shouldSave = false;
+
+const max = (a, b) => a > b ? a : b;
+const min = (a, b) => a < b ? a : b;
 
 export default {
   components: {
@@ -24,13 +26,7 @@ export default {
   },
   data() {
     return {
-      slideList: [
-        {
-          name: defaultSlideName,
-          frameContent: defaultFrame,
-          editorContent: structuredClone(defaultContent),
-        },
-      ],
+      slideList: [],
       slideName: defaultSlideName,
       expirationDate: null,
       transitionTime: defaultTransitionTime,
@@ -50,23 +46,32 @@ export default {
   methods: {
     addNewSlide() {
       this.slideList.push({
-        name: this.slideName,
-        editorContent: this.editorContent,
-        transitionTime: this.transitionTime,
-        expirationDate: this.expirationDate,
+        name: defaultSlideName,
+        editorContent: structuredClone(defaultContent),
+        transitionTime: defaultTransitionTime,
+        expirationDate: null,
       });
 
-      this.frameContent = defaultFrame;
-      this.editorContent = structuredClone(defaultContent);
-      this.transitionTime = defaultTransitionTime;
-      this.expirationDate = null;
-      this.currentSlideIndex = this.slideList.length - 1;
+      this.selectSlide(this.slideList.length - 1);
     },
-    selectedSlide(n) {
+    storeCurrentSlide() {
       this.slideList[this.currentSlideIndex].name = this.slideName;
       this.slideList[this.currentSlideIndex].editorContent = this.editorContent;
       this.slideList[this.currentSlideIndex].transitionTime = this.transitionTime;
       this.slideList[this.currentSlideIndex].expirationDate = this.expirationDate;
+    },
+    selectSlide(n, saveChanges = true, forceSelection = false) {
+      if (this.currentSlideIndex == n && !forceSelection) return;
+
+      // Makes n safe
+      // If n < 0, then 0
+      n = max(n, 0)
+      // if n >= length of the array then last element
+      n = min(n, this.slideList.length - 1)
+
+      if (saveChanges) {
+        this.storeCurrentSlide()
+      }
 
       this.slideName = this.slideList[n].name;
       this.expirationDate = this.slideList[n].expirationDate;
@@ -76,11 +81,53 @@ export default {
 
       this.currentSlideIndex = n;
     },
+    removeSlide(n) {
+      let isLastSlide = n == this.currentSlideIndex;
+
+      this.slideList.splice(n, 1);
+      if (this.slideList.length == 0) {
+        this.currentSlideIndex = 0;
+        return;
+      }
+
+      if (n < this.currentSlideIndex) this.currentSlideIndex -= 1;
+
+      this.selectSlide(this.currentSlideIndex, !isLastSlide, true);
+    },
     notifySave() {
       this.$toast.add({ severity: 'info', summary: "The project was saved successfully", life: 2000 })
     },
+    notifyFailure(reason) {
+      this.$toast.add({ severity: 'error', summary: `Something went wrong while saving: ${reason}`, life: 2000 })
+    },
+    loadSlides() {
+      fetch("/api/listSlides")
+        .then(res => res.json())
+        .then(json => {
+          let slides = json.map(slide => ({
+            ...slide,
+            expirationDate: slide.expirationDate
+              ? new Date(slide.expirationDate)
+              : null
+          }));
+
+          this.slideList = slides;
+
+          if (this.slideList.length != 0) this.selectSlide(0, false, true)
+        });
+    },
     saveSlides() {
-      this.notifySave()
+      if (this.slideList.length != 0) {
+        this.storeCurrentSlide()
+      }
+
+      fetch("/api/createSlides", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.slideList)
+      }).then(() => this.notifySave()).catch((reason) => this.notifyFailure(reason))
     },
     monitorSlides() {
       if (shouldSave) {
@@ -90,6 +137,7 @@ export default {
     }
   },
   mounted() {
+    this.loadSlides();
     setInterval(this.monitorSlides, 5000)
   }
 };
@@ -112,7 +160,7 @@ export default {
         </button>
       </div>
       <SlideSelector :slide-list="slideList" :current-slide="currentSlideIndex" @add-new-slide="addNewSlide"
-        @selected-slide="selectedSlide" />
+        @select-slide="selectSlide" @remove-slide="removeSlide" />
     </aside>
 
     <!-- Main Content Area -->
