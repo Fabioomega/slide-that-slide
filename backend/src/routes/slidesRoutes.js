@@ -6,7 +6,7 @@ const auth = require('../middlewares/auth');
 
 router.get('/listSlides', slidesController.listSlides); //http://localhost:3000/api/listSlides
 
-router.post('/createSlides', slidesController.createSlides);//not sure about auth
+router.post('/createSlides', auth, slidesController.createSlides);//not sure about auth
 
 router.get('/onSlideChange', sseController.eventsHandler); //http://localhost:3000/api/onSlideChange
 
