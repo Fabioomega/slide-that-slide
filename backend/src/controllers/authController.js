@@ -23,7 +23,7 @@ exports.register = async (req, res, next) => {
 
         const existe = await User.findOne({ username });
 
-        if(existe) {
+        if (existe) {
             return res.status(400).json({
                 "mensagem": "Usuário já cadastrado."
             });
@@ -42,14 +42,14 @@ exports.register = async (req, res, next) => {
         });
     }
 
-    catch(err) {
+    catch (err) {
         next(err);
     }
 }
 
 exports.login = async (req, res, next) => {
     try {
-        const {username, senha} = req.body;
+        const { username, senha } = req.body;
 
         const campos = ['username', 'senha'];
 
@@ -68,15 +68,15 @@ exports.login = async (req, res, next) => {
 
         const user = await User.findOne({ username });
 
-        if(!user) {
+        if (!user) {
             return res.status(401).json({
-                "mensagem": "Usuário já cadastrado."
+                "mensagem": "Usuário não cadastrado."
             });
         }
 
         const ok = await user.validarSenha(senha);
 
-        if(!ok) {
+        if (!ok) {
             return res.status(401).json({
                 "mensagem": "Credênciais inválidas."
             });
@@ -88,19 +88,19 @@ exports.login = async (req, res, next) => {
             },
             jwtSecret,
             { expiresIn: "1h" }
-        ); 
+        );
 
         res.cookie("token", token, {
-            httpOnly: true,       
-            secure: false, 
-            sameSite: "strict",   
-            maxAge: 60 * 60 * 1000 
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000
         });
 
         return res.json({
             user: { id: user._id, username: user.username, role: user.role }
         });
-        
+
     }
 
     catch (err) {
@@ -110,5 +110,5 @@ exports.login = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
     res.clearCookie("token", { path: "/" });
-    return res.json({"mensagem": "Logout realizado."});
+    return res.json({ "mensagem": "Logout realizado." });
 };

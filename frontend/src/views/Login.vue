@@ -11,8 +11,17 @@ const login = async (username, password) => {
         })
     })
 
-    return f.json()
+    return [f.status, await f.json()]
+}
 
+const checkRedirect = async (url) => {
+    let f = await fetch(url)
+
+    return f.status;
+}
+
+const redirect = (subpath) => {
+    window.location.assign(window.location.origin + subpath)
 }
 
 export default {
@@ -25,10 +34,19 @@ export default {
     },
     methods: {
         buttonHandler() {
-          login(username, password).then(
-            (res) => this.response = res
-        )
-      }
+            login(this.username, this.password).then(([status, json]) => {
+                this.response = json
+
+                if (status != 401) {
+                    redirect('/editor')
+                }
+            });
+        }
+    },
+    mounted() {
+        checkRedirect("/editor").then((status) => {
+            if (status != 401) redirect('/editor')
+        })
     }
 }
 </script>
@@ -39,5 +57,3 @@ export default {
     <button @click="buttonHandler">Login</button>
     <p>{{ response }}</p>
 </template>
-
-<
