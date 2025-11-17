@@ -8,6 +8,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const errorHandler = require('./middlewares/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const slideRoutes = require('./routes/slidesRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 
 const cookieParser = require('cookie-parser');
@@ -359,6 +360,7 @@ app.use(cookieParser());
 app.use('/', pageRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', slideRoutes);
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
