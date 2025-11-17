@@ -15,11 +15,9 @@ exports.listSlides = async (req, res, next) => {
 
 exports.createSlides = async (req, res, next) => {
     try {
-        console.log("Recebido no req.body:", req.body); 
-
         if (!Array.isArray(req.body)) {
-            return res.status(400).json({ 
-                message: "O corpo da requisição deve ser um ARRAY de slides." 
+            return res.status(400).json({
+                message: "O corpo da requisição deve ser um ARRAY de slides."
             });
         }
 
