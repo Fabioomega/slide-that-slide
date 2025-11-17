@@ -1,10 +1,11 @@
 // Importe o Modelo para buscar os slides
-const Slide = require('../models/Slide'); 
+const Slide = require('../models/Slide');
 // Importe o nosso "sinalizador"
 const emitter = require('../services/eventEmitter');
 
 exports.eventsHandler = (req, res, next) => {
     // 1. Definir os headers essenciais do SSE
+    res.setHeader('X-Accel-Buffering', 'no');
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
